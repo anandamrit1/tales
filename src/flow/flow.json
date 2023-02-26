@@ -1,0 +1,54 @@
+{
+	"contracts": {
+		"FlowMeiumContract": {
+			"source": "./cadence/contracts/FlowMeiumContract.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "44123a11bae69029",
+				"mainnet": "0xee837a2c3d2e13a4"
+			}
+		}
+	},
+	"networks": {
+		"emulator": "127.0.0.1:3569",
+		"mainnet": "access.mainnet.nodes.onflow.org:9000",
+		"testnet": "access.devnet.nodes.onflow.org:9000"
+	},
+	"accounts": {
+		"emulator-account": {
+			"fromFile": "./emulator.private.json"
+		},
+		"talesv1": {
+			"address": "44123a11bae69029",
+			"key": {
+				"type": "file",
+				"location": "talesv1.pkey"
+			}
+		},
+		"testaccountdhalla": {
+			"address": "ee837a2c3d2e13a4",
+			"key": {
+				"type": "file",
+				"location": "testaccountdhalla.pkey"
+			}
+		}
+	},
+	"deployments": {
+		"emulator": {
+			"emulator-account": [
+				"FlowMeiumContract"
+			]
+		},
+		"testnet": {
+			"talesv1": [
+				"FlowMeiumContract"
+			]
+		},
+		"mainnet": {
+			"testaccountdhalla": [
+				"FlowMeiumContract"
+			]
+		}
+	}
+}
+
