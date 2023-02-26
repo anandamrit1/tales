@@ -1,3 +1,4 @@
+import { OutputData } from "@editorjs/editorjs";
 
 export type Author = {
     name: string;
@@ -6,10 +7,25 @@ export type Author = {
     address: string;
     description: string;
     img: string;
-    articles: Article[];
+    articles?: Article[];
+    findName?: string
 };
 
 export type Article = {
+    authorAddress: string;
+    authorName: string;
+    authorDesc: string;
+    authorImg: string;
+    title: string;
+    content: OutputData;
+    coverImg: string;
+    readTime: number;
+    createdAt: string;
+    id: string;
+    likes: number;
+}
+
+export type ArticleForIPFS = {
     authorAddress: string;
     authorName: string;
     authorDesc: string;
