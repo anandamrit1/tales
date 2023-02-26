@@ -2,7 +2,7 @@ export const demoPost = {
     authorAddress: "0x12Ab345Cd67890EF",
     authorName: "John Doe",
     authorDesc: "A passionate writer with over 10 years of experience in the field",
-    authorImg: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fsnappa.com%2Fcreate%2Fprofile-pictures&psig=AOvVaw1x7c1hRqChoNTUfyEd8Dei&ust=1677349513272000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCKC084Dkrv0CFQAAAAAdAAAAABAE",
+    authorImg: "https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_0.jpg",
     title: "The Power of Web3: A Comprehensive Guide",
     content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. \
     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. \
@@ -35,10 +35,19 @@ export const demoPost = {
     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. \
     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. \
     ",
-    coverImg: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.goodmorningimagesforlover.com%2Ffacebook-cover-photo-hindi-banner-images%2F&psig=AOvVaw2V_p5SU1yNZlcPp_QTWrZm&ust=1677349565564000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCPCG5pnkrv0CFQAAAAAdAAAAABAE",
+    coverImg: "https://www.goodmorningimagesforlover.com/wp-content/uploads/2018/11/jfgjkld22cv.jpg",
     readTime: 20,
     createdAt: "2022-02-12T09:00:00.000Z",
     id: "123",
     likes: 0,
   }
+  
+export const demoAuthor = {
+    name: "John Doe",
+    email: "johndoe@example.com",
+    date: "2022-02-24",
+    address: "0x1234567890",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    img: "https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_0.jpg"
+};
   
