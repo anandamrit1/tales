@@ -1,19 +1,48 @@
 // a page for displaying all articles written by the current user
 // this page is only accessible to logged in users
 // each article is displayed on cards with the article's title and date
+// @ts-ignore
+import * as fcl from '@onflow/fcl'
+// @ts-ignore
+import GetFindProfile from '../cadence/scripts/GetFindProfile.cdc'
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Article } from 'types/types';
 import { BodyLayout } from 'components/BodyLayout';
 import SideNav from 'components/SideNav';
-import { demoPost } from 'utils/constants';
+import { demoAuthor, demoPost } from 'utils/constants';
 import { useNavigate } from 'react-router-dom';
+import useCurrentUser from 'hooks/useCurrentUser';
 
 function MyArticles() {
     const [data, setData] = React.useState<Article[]>([demoPost]); // data is an array of articles
     const [isLoading, setIsLoading] = React.useState(false);
     
     const navigate = useNavigate()
+    const user = useCurrentUser()
+
+    useEffect(() => {
+      if (!user.loggedIn) {
+        navigate('/')
+      }
+    }, [user])
+
+    useEffect(() => {
+        const getProfile = async () => {
+          var res;
+          try {
+            res = await fcl.query({
+              cadence: GetFindProfile,
+              args: (arg: any, t: any):any => [arg(user.addr, t.Address), arg("", t.String)]
+            })
+            console.log("Profile : ", res)
+          } catch(e) {
+            console.log("Profile Error: ", e)
+          }
+        }
+    
+        getProfile()
+      }, [])
 
     return (
         <BodyLayout>
@@ -32,7 +61,9 @@ function MyArticles() {
             <div className="flex flex-col items-center">
             {isLoading && <p>Loading...</p>}
             {data?.map((article: Article) => (
-                <div key={article.id} className="flex justify-between w-[840px] bg-white-100 p-8 rounded-xl cursor-pointer">
+                <div key={article.id}
+                onClick={() => navigate(`/${demoAuthor.address}/${article.id}`)}
+                className="flex justify-between w-[840px] bg-white-100 p-8 rounded-xl cursor-pointer">
                     <div className='flex flex-col'>
                         <h2 className='text-lg'>{article.title}</h2>
                         <p className='text-sm text-gray-400'>{new Date(article.createdAt).toLocaleDateString()}</p>

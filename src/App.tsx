@@ -8,6 +8,7 @@ import AuthorPage from 'pages/Author';
 import AuthorDashboard from 'pages/AuthorDashboard';
 import MyArticles from 'pages/MyArticles';
 import Editor from 'pages/Editor';
+import Subscribers from 'pages/Subscribers';
 
 
 function App() {
@@ -21,6 +22,14 @@ function App() {
             element={
               <ThemeProvider>
                 <MyArticles />    
+              </ThemeProvider>
+            } 
+          />
+          <Route 
+            path="/subscribers" 
+            element={
+              <ThemeProvider>
+                <Subscribers />    
               </ThemeProvider>
             } 
           />
@@ -39,7 +48,7 @@ function App() {
             }
           />
           <Route
-            path="/:authorId/:id"
+            path="/:authorId/:articleId"
             element={
               <ThemeProvider>
                 <Post />

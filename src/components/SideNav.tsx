@@ -1,3 +1,5 @@
+// @ts-ignore
+import * as fcl from '@onflow/fcl'
 import classNames from "classnames";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -7,13 +9,13 @@ type TabType = "Articles" | "Subscribers" | "Settings";
 const NavData: NavBarGroupData = [
       {
         title: "Articles",
-        route: "/events",
+        route: "/dashboard",
         imgSrc: "article",
       },
       {
         title: "Subscribers",
-        route: "/integrations",
-        imgSrc: "send",
+        route: "/subscribers",
+        imgSrc: "people",
       },
       {
         title: "Settings",
@@ -52,7 +54,7 @@ function SideNav({ selectedTab }: { selectedTab: TabType }) {
                     0x000319313
                 </div>
             </div>
-            <span className="material-icons text-sm self-center cursor-pointer">logout</span>
+            <span onClick={() => fcl.unauthenticate()} className="material-icons text-sm self-center cursor-pointer">logout</span>
         </div>
       </div>
     </>
