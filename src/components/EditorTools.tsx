@@ -15,11 +15,10 @@ import Image from '@editorjs/image'
 // @ts-ignore
 import Header from '@editorjs/header'
 // @ts-ignore
-import Quote from '@editorjs/quote'
-// @ts-ignore
-import CheckList from '@editorjs/checklist'
-// @ts-ignore
 import edjsParser from 'editorjs-parser'
+// @ts-ignore
+import LinkTool from '@editorjs/link'
+import { atom, useRecoilState } from 'recoil'
 
 interface EditorCore {
   destroy(): Promise<void>
@@ -36,45 +35,44 @@ const blocks = {
   blocks: [
     {
       id: "sheNwCUP5A",
-      type: "paragraph",
+      type: "header",
       data: {
         text: "Editor.js",
-        level: 2
+        level: 1
       }
     }
   ]
 }
 
+const editorState = atom<OutputData>({
+  key: 'editorState',
+  default: blocks,
+});
+
 type EditorToolsProps = {
-  onChange: (data: string) => void
+  onChange: (data: OutputData) => void
 }
 
 function EditorTools({ onChange }: EditorToolsProps) {
   // const [blogData, setBlogData] = React.useState<string>("")
-  const [editorData, setEditorData] = React.useState<OutputData>(blocks)
+  const [editorData, setEditorData] = useRecoilState<OutputData>(editorState)
 
   const ReactEditorJS = createReactEditorJS()
   const editorCore = React.useRef(null)
-  const parser = new edjsParser();
 
   const handleInitialize = React.useCallback((instance: any) => {
     editorCore.current = instance
   }, [])
 
-  const handleSave = React.useCallback(async () => {
-    const savedData = await editorCore.current.save();
-    console.log(parser.parse(savedData.blocks))
-  }, [])
-
   const handleChange = async(data: API) => {
-    setEditorData(await data.saver.save())
-    const parsedData = parser.parse(await data.saver.save())
-    onChange(parsedData)
+    const outputData = await data.saver.save()
+    setEditorData(outputData)
+    onChange(outputData)
   }
 
 
   return (
-    <div className='w-screen mx-auto'>
+    <div className='w-screen mx-auto '>
       <ReactEditorJS 
         defaultValue={editorData} 
         tools={{ 
@@ -83,9 +81,15 @@ function EditorTools({ onChange }: EditorToolsProps) {
           list: List,
           code: Code,
           image: Image,
-          header: Header,
-          quote: Quote,
-          checklist: CheckList
+          header: {
+            class: Header,
+            config: {
+              placeholder: 'Enter a header',
+              levels: [1, 2, 3],
+              defaultLevel: 1
+            }
+          },
+          linkTool: LinkTool,
         }}
         value={blocks}
         onChange={(data) => handleChange(data)}
