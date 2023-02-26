@@ -4,6 +4,8 @@ import reportWebVitals from './reportWebVitals';
 import App from './App';
 
 import 'styles/globals.css';
+import 'degen/styles'
+import { ThemeProvider } from 'degen';
 
 ReactDOM.render(
   <React.StrictMode>
