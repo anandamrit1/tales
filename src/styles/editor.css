@@ -1,0 +1,61 @@
+
+.codex-editor h1 {
+    font-size: 48px !important;
+    font-weight: 900 !important;
+}
+
+.codex-editor h2 {
+    font-size: 32px !important;
+    font-weight: 700 !important;
+}
+
+.codex-editor h3 {
+    font-size: 24px !important;
+    font-weight: 500 !important;
+}
+
+.ce-code textarea{
+    background-color: beige;
+    margin: 10px 0;
+}
+
+.editor h1 {
+    font-size: 48px !important;
+    font-weight: 900 !important;
+}
+
+.editor h2 {
+    font-size: 32px !important;
+    font-weight: 700 !important;
+}
+
+.editor h3 {
+    font-size: 24px !important;
+    font-weight: 500 !important;
+}
+
+.editor pre {
+    background-color: aliceblue;
+    padding: 8px;
+    margin: 8px 0;
+    border-radius: 8px;
+}
+
+.editor ul {
+    padding-left: 16px;
+    list-style: circle;
+}
+
+.editor ol {
+    padding-left: 24px;
+    list-style: decimal;
+}
+
+.editor b {
+    font-weight: bold;
+}
+
+.editor a {
+    color: green;
+    text-decoration: underline;
+}
