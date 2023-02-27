@@ -1,8 +1,8 @@
 import ArticleCard from 'components/Card'
 import { useAuthor } from 'hooks/useAuthor'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Article, Author } from 'types/types'
+import { ArticleType, Author } from 'types/types'
 import { demoAuthor, demoPost } from 'utils/constants'
 
 export type AuthorProps = {
@@ -10,12 +10,30 @@ export type AuthorProps = {
 }
 
 function AuthorPage() {
-    const recentPosts: Article[] = Array(8).fill(0).map((_, i) => ({ ...demoPost, id: i.toString() }));
+    const [articles, setArticles] = React.useState<ArticleType[]>([])
+    const [loading, setLoading] = React.useState<boolean>(false)
+
     const params = useParams()
 
-    const author = useAuthor(params.id)
-    console.log(author)
-    if (!author) return <></>
+    const { author, isAuthorLoading } = useAuthor(params.id)
+    
+    useEffect(() => {
+        const getArticlesByAuthor = async (address: string) => {
+            const articles = [demoPost]
+            // await fetch(`http://localhost:3000/api/articles?author=${address}`)
+            //     .then(res => res.json())
+            setArticles(articles)
+        }
+        if (author && author.address) {
+            if (author.name)
+                document.title = `${author.name} - Tales`
+
+            getArticlesByAuthor(author.address)
+        }
+    }, [author])
+    
+    if (loading || isAuthorLoading) return <>Loading</>
+    if (!author) return <div className='flex items-center justify-center text-lg'>Author not found</div>
     
     return (
         <div className='flex flex-col scroll-auto'>
@@ -36,22 +54,23 @@ function AuthorPage() {
                 <div className='my-10 mx-auto w-5/6 py-8 px-4  bg-gray-100 rounded-lg '>
                     <div className='flex justify-between items-center px-8'>
                         <div className='flex flex-col justify-center '>
-                            <div>Subscibe to {demoAuthor.name}</div>
+                            <div>Subscibe to {author.name}</div>
                             <div>Receive updates directly in your inbox</div>
                         </div>
                         <div className='flex justify-center'>
                         <input
-                            className='w-1/3 px-4 py-2  rounded-l-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent' />
+                            type="email"
+                            placeholder="Enter your email"
+                            className='w-80 px-4 py-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent' />
                         <button className='bg-green-600 text-white px-4 py-2 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent'>Subscribe</button>
                     </div>
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-20 w-5/6 mx-auto ">
-                    {recentPosts.map((post) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-20 w-5/6 mx-auto ">
+                    {articles?.map((post) => (
                         <ArticleCard
                             key={post.id}
                             article={post}
-                            author={author}
                         />
                     ))}
                 </div>
