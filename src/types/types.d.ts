@@ -7,11 +7,11 @@ export type Author = {
     address: string;
     description: string;
     img: string;
-    articles?: Article[];
+    articles?: ArticleType[];
     findName?: string
 };
 
-export type Article = {
+export type ArticleType = {
     authorAddress: string;
     authorName: string;
     authorDesc: string;

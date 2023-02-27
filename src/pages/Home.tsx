@@ -19,7 +19,7 @@ function Home() {
       <div className="w-screen flex justify-between items-center py-10 px-12 lg:py-0">
         <div className="px-28 flex flex-col">
             <h1 className="font-black text-7xl max-w-2xl text-green-900 font-serif">
-                the only publishing stack on Flow
+                the publishing stack on Flow
             </h1>
             <h2 className="text-2xl mt-8 max-w-2xl text-gray-600">
                 Empower your online voice with Tales's web3 publishing platform, with the power of Flow

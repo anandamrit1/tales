@@ -25,11 +25,11 @@ export const demoPost = {
   }
   
 export const demoAuthor = {
-  name: "John Doe",
-  email: "johndoe@example.com",
-  date: "2022-02-24",
-  address: "0x1234567890",
-  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  name: "",
+  email: "",
+  date: "",
+  address: "0x0",
+  description: "",
   img: "https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_0.jpg"
 };
   
