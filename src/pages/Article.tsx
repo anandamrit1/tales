@@ -1,56 +1,89 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { demoPost } from "../utils/constants";
 import ArticleCard from "../components/Card";
 import { Button, Heading, Tag } from "degen";
-import { Article } from "types/types";
+import { ArticleType } from "types/types";
 import { useAuthor } from "hooks/useAuthor";
 // @ts-ignore
 import edjsParser from 'editorjs-parser'
+import SubscribeModel from "components/SubscribeModel";
+
 
 type PostProps = {
-    post?: Article;
+    post?: ArticleType;
     isPreview?: boolean
+    authorIdForPreview?: string
+    articleIdForPreview?: string
 };
 
-const Post = ({ post, isPreview=false }: PostProps) => {
-    const { authorId, articleId } = useParams();
 
-    const author = useAuthor(authorId)
+const Article = ({ post, isPreview = false, authorIdForPreview }: PostProps) => {
+    const { authorId, articleId } = useParams() ?? {};
+    const { author, isAuthorLoading } = useAuthor(isPreview ? authorIdForPreview : authorId)
     const parser = new edjsParser();
-
-    //   const data = useSelector((state) => state.blockchain.value);
     const navigate = useNavigate()
+
+
     const [loading, setLoading] = useState(false);
     const [tipAmount, setTipAmount] = useState(0);
-    const [recentPosts, setRecentPosts] = useState<Article[]>([demoPost]);
-    const [article, setPost] = useState<Article>(post ?? demoPost);
-
+    const [article, setArticle] = useState<ArticleType>();
     const [show, setShow] = useState(false);
+
+
+    useEffect(() => {
+        if (isPreview) {
+            setArticle(post)
+        }
+    }, [isPreview, post])
+
+
+    useEffect(() => {
+        const getArticlesByAuthor = async (address: string) => {
+            const article = demoPost
+            // await fetch(`http://localhost:3000/api/articles?author=${address}`)
+            //     .then(res => res.json())
+            setArticle(article)
+        }
+        if (author && author.address && !isPreview) {
+            if (author.name)
+                document.title = `${author.name} - Tales`
+
+            getArticlesByAuthor(author.address)
+        }
+    }, [author, isPreview])
+
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    if (!author) return <></>
+
+    if (isAuthorLoading) return <></>
+    if (!author?.address || article === undefined) return <div className='flex items-center justify-center text-lg'>Author not found</div>
+
 
     return (
         <div className="editor">
             <div className="mx-auto pt-6 px-4 sm:px-6 lg:px-8 max-h-screen scroll-auto flex flex-col">
                 {/* nav with author photo and name and walletaddress on left and subscribe button on right. */}
                 <div className="flex justify-between items-center px-8">
-                    <div onClick={() => navigate(`/${article.authorAddress}`)} className="flex items-center space-x-4 cursor-pointer">
-                        <img className="w-10 h-10 rounded-full" src={article.authorImg} alt="Author" />
+                    <div onClick={() => navigate(`/${author.address}`)} className="flex items-center space-x-4 cursor-pointer">
+                        <img className="w-10 h-10 rounded-full" src={author.img} alt="Author" />
                         <div>
                             <p className="text-gray-800 text-sm font-medium">
-                                {article.authorName}
+                                {author.name}
                             </p>
-                            <p className="font-light text-xs">{article.authorAddress}</p>
+                            <p className="font-light text-xs">{author.address}</p>
                         </div>
                     </div>
-                    <Button variant="primary" size="small" tone="green" onClick={handleShow}>
-                        Subscribe
-                    </Button>
+                    <div className="flex gap-6">
+                        <Button variant="tertiary" size="small" onClick={handleShow}>
+                            Pay to read
+                        </Button>
+                        <Button variant="primary" size="small" tone="green" onClick={handleShow}>
+                            Subscribe
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="max-w-3xl min-w-[50vw] mx-auto py-6">
@@ -62,10 +95,10 @@ const Post = ({ post, isPreview=false }: PostProps) => {
                     <div className="mt-8 flex items-center justify-between w-full space-x-4">
                         <div className="flex">
                             <div className="cursor-pointer"
-                                onClick={() => navigate(`/${article.authorAddress}`)}
+                                onClick={() => navigate(`/${author.address}`)}
                             >
                                 <Tag hover tone="green" size="small">
-                                    {article.authorAddress}
+                                    {author.address}
                                 </Tag>
                             </div>
                             <Tag size="small">
@@ -80,7 +113,7 @@ const Post = ({ post, isPreview=false }: PostProps) => {
                     </div>
                 </div>
 
-                {
+                {/* {
                     !isPreview && <div className="w-screen bg-gray-500">
                         <div className="mt-8 mx-auto max-w-6xl py-20">
                             <h2 className="text-base text-gray-800">More from {article.authorName}</h2>
@@ -95,14 +128,19 @@ const Post = ({ post, isPreview=false }: PostProps) => {
                             </div>
                         </div>
                     </div>
-                }
-
+                } */}
             </div>
+            {
+                show && 
+                <div>
+                    <div onClick={handleClose} className="absolute top-0 left-0 w-screen h-screen"></div>
+                    <div className="absolute top-24 right-20">
+                        <SubscribeModel onSubscribe={handleClose} name={article.authorName} />
+                    </div>
+                </div>
+            }
         </div>
-
-
-
     );
 };
 
-export default Post;
+export default Article;
