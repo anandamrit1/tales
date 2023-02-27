@@ -7,42 +7,47 @@ import * as fcl from '@onflow/fcl'
 import GetFindProfile from '../cadence/scripts/GetFindProfile.cdc'
 
 import React, { useEffect } from 'react';
-import { Article } from 'types/types';
+import { ArticleType } from 'types/types';
 import { BodyLayout } from 'components/BodyLayout';
 import SideNav from 'components/SideNav';
 import { demoAuthor, demoPost } from 'utils/constants';
 import { useNavigate } from 'react-router-dom';
 import useCurrentUser from 'hooks/useCurrentUser';
+import { useAuthor } from 'hooks/useAuthor';
+import RegisterProfile from 'components/RegisterProfile';
 
 function MyArticles() {
-    const [data, setData] = React.useState<Article[]>([demoPost]); // data is an array of articles
+    const [data, setData] = React.useState<ArticleType[]>([]); // data is an array of articles
     const [isLoading, setIsLoading] = React.useState(false);
     
     const navigate = useNavigate()
     const user = useCurrentUser()
 
+    // const { author, isAuthorLoading } = useAuthor(user.addr)
+    const { author, isAuthorLoading } = { author: demoAuthor, isAuthorLoading: false}
     useEffect(() => {
       if (!user.loggedIn) {
         navigate('/')
       }
     }, [user])
 
-    useEffect(() => {
-        const getProfile = async () => {
-          var res;
-          try {
-            res = await fcl.query({
-              cadence: GetFindProfile,
-              args: (arg: any, t: any):any => [arg(user.addr, t.Address), arg("", t.String)]
-            })
-            console.log("Profile : ", res)
-          } catch(e) {
-            console.log("Profile Error: ", e)
-          }
-        }
-    
-        getProfile()
-      }, [])
+    if (isAuthorLoading) {
+        return (
+            <BodyLayout>
+                <SideNav selectedTab="Articles" />
+                <div className='flex flex-col p-10'>
+                    <div className='flex flex-col items-center'>
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            </BodyLayout>
+        )
+    }
+
+    if (author?.address == "") {
+        // register the users name in a input box and a submit button with better styles
+        return <RegisterProfile />
+    }
 
     return (
         <BodyLayout>
@@ -60,7 +65,10 @@ function MyArticles() {
         <div className="flex flex-col p-10">
             <div className="flex flex-col items-center">
             {isLoading && <p>Loading...</p>}
-            {data?.map((article: Article) => (
+            {
+              data?.length == 0 ? 
+              <p className='text-center'>You have no articles yet. Click on the button above to create one.</p>
+              : data?.map((article: ArticleType) => (
                 <div key={article.id}
                 onClick={() => navigate(`/${demoAuthor.address}/${article.id}`)}
                 className="flex justify-between w-[840px] bg-white-100 p-8 rounded-xl cursor-pointer">
