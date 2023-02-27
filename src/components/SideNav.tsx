@@ -1,6 +1,8 @@
 // @ts-ignore
 import * as fcl from '@onflow/fcl'
 import classNames from "classnames";
+import { useAuthor } from 'hooks/useAuthor';
+import useCurrentUser from 'hooks/useCurrentUser';
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Logo } from "../images"
@@ -25,6 +27,9 @@ const NavData: NavBarGroupData = [
     ]
 
 function SideNav({ selectedTab }: { selectedTab: TabType }) {
+  const user = useCurrentUser()
+  const { author } = useAuthor(user?.addr)
+
   return (
     <>
       <div className="overflow-y-auto py-4 px-3 bg-white-100 h-full w-[300px] flex flex-col justify-between">
@@ -43,18 +48,21 @@ function SideNav({ selectedTab }: { selectedTab: TabType }) {
             </div>
         </div>
         <div className="flex pl-4">
-            <img 
-                src={"https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_0.jpg"}
+            {
+              author?.img && 
+              <img 
+                src={author?.img}
                 className="rounded-full h-10"
                 alt="Flowbite Logo"
-            />
+              />
+            }
             <div className="flex flex-col ml-2 w-52">
-                <div className="text-sm font-semibold">John Doe</div>
+                {author?.name && <div className="text-sm font-semibold">{author?.name}</div>}
                 <div className="text-xs text-gray-500">
-                    0x000319313
+                    {author?.findName != "" ? author?.findName : user?.addr}
                 </div>
             </div>
-            <span onClick={() => fcl.unauthenticate()} className="material-icons text-sm self-center cursor-pointer">logout</span>
+            <span onClick={() => fcl.unauthenticate()} className="material-icons text-base px-2 pt-1 w-8 h-8 hover:bg-gray-100 rounded-full self-center cursor-pointer">logout</span>
         </div>
       </div>
     </>
