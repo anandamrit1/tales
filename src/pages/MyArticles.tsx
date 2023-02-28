@@ -5,12 +5,13 @@
 import * as fcl from "@onflow/fcl";
 // @ts-ignore
 import GetFindProfile from "../cadence/scripts/GetFindProfile.cdc";
+// @ts-ignore
+import GetAllMyArticles from '../cadence/scripts/GetAllMyArticles.cdc'
 
 import React, { useEffect } from "react";
 import { ArticleType } from "types/types";
 import { BodyLayout } from "components/BodyLayout";
 import SideNav from "components/SideNav";
-import { demoAuthor, demoPost } from "utils/constants";
 import { useNavigate } from "react-router-dom";
 import useCurrentUser from "hooks/useCurrentUser";
 import { useAuthor } from "hooks/useAuthor";
@@ -23,11 +24,52 @@ function MyArticles() {
   const navigate = useNavigate();
   const user = useCurrentUser();
 
-  // const { author, isAuthorLoading } = useAuthor(user.addr)
-  const { author, isAuthorLoading } = {
-    author: demoAuthor,
-    isAuthorLoading: false,
-  };
+  const { author, isAuthorLoading } = useAuthor(user.addr)
+
+  useEffect(() => {
+    const getMyArticles = async (address: string) => {
+        let res;
+        try {
+          res = await fcl.query({
+            cadence: GetAllMyArticles,
+            args: (arg: any, t: any) => [arg(address, t.Address), arg(address, t.Address)]
+          })
+        } catch(e) { res = []; console.log(e) }
+        console.log("Res: ", res)
+        return res
+    }
+
+    const getArticlesByAuthor = async (address: string) => {
+        const articles = await getMyArticles(address)
+
+        const myArticles = await Promise.all(articles.map(async (a: any) => { 
+            let p = a.data as string
+            
+            // const data: OutputData = await fetch(p.replace("ipfs.io", "nftstorage.link")).then(res => res.json())
+
+            return Promise.resolve({
+                authorAddress: a.author,
+                authorName: "",
+                authorDesc: "",
+                authorImg: "",
+                title: a.title,
+                content: "",
+                coverImg: a.image,
+                readTime: 0,
+                createdAt: new Date(parseInt(a.createDate)* 1000).toDateString(),
+                id: a.id,
+                likes: 0,
+            })
+        })) 
+
+        setData(myArticles)
+    }
+
+    if (user && user?.addr) {
+        getArticlesByAuthor(user?.addr)
+    }
+}, [user])
+
   useEffect(() => {
     if (!user.loggedIn) {
       navigate("/");
@@ -47,7 +89,7 @@ function MyArticles() {
     );
   }
 
-  if (author?.address == "") {
+  if (!author?.address) {
     // register the users name in a input box and a submit button with better styles
     return <RegisterProfile />;
   }
@@ -75,28 +117,30 @@ function MyArticles() {
               </p>
             ) : (
               data?.map((article: ArticleType) => (
-                <div
-                  key={article.id}
-                  onClick={() =>
-                    navigate(`/${demoAuthor.address}/${article.id}`)
-                  }
-                  className="flex justify-between w-[840px] bg-white-100 p-8 rounded-xl cursor-pointer"
-                >
-                  <div className="flex flex-col">
-                    <h2 className="text-lg">{article.title}</h2>
-                    <p className="text-sm text-gray-400">
-                      {new Date(article.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="material-icons self-center hover:bg-gray-100 p-2 cursor-pointer rounded-full">
-                      edit
-                    </span>
-                    <span className="material-icons self-center hover:bg-gray-100 p-2 cursor-pointer rounded-full">
-                      delete
-                    </span>
-                  </div>
-                </div>
+                <>
+                    <div
+                    key={article.id}
+                    onClick={() =>
+                        navigate(`/${user?.addr}/${article.id}`)
+                    } 
+                    className="flex justify-between w-[840px] bg-white-100 p-8 my-2 rounded-2xl cursor-pointer"
+                    >
+                    <div className="flex flex-col">
+                        <h2 className="text-lg font-black">{article.title}</h2>
+                        <p className="text-sm text-gray-400">
+                        {new Date(parseInt(article.createdAt) * 1000).toLocaleDateString()}
+                        </p>
+                    </div>
+                    <div>
+                        <span className="material-icons self-center hover:bg-gray-100 p-2 cursor-pointer rounded-full">
+                            edit
+                        </span>
+                        <span className="material-icons self-center hover:bg-gray-100 p-2 cursor-pointer rounded-full">
+                            delete
+                        </span>
+                    </div>
+                    </div>
+                </>
               ))
             )}
           </div>
