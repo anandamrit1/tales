@@ -242,7 +242,7 @@ const Article = ({ post, isPreview = false, authorIdForPreview }: PostProps) => 
                 </div>
 
                 <div className="max-w-3xl min-w-[50vw] mx-auto py-6">
-                    <div className="mt-8">
+                    <div className="mt-8 flex flex-col items-center">
                         {
                             article.coverImg ? 
                                 <img className="rounded-lg mb-6 w-[720px] h-[360px] bg-green-900" src={article.coverImg} />
