@@ -5,11 +5,11 @@
 // uses react-tapable-editor for the editor
 // uses react-markdown for the preview
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BodyLayout } from 'components/BodyLayout';
 import { useNavigate } from 'react-router-dom';
 import { ArticleType, ArticleForIPFS } from 'types/types';
-import { demoAuthor, demoPost } from 'utils/constants';
+import { demoPost } from 'utils/constants';
 import EditorTools from 'components/EditorTools';
 import Post from './Article';
 // @ts-ignore
@@ -20,17 +20,22 @@ import * as fcl from '@onflow/fcl'
 import CreateArticle from '../cadence/transactions/CreateArticle.cdc'
 
 import '../styles/editor.css'
-import { atom, useRecoilState } from 'recoil';
+import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import { OutputData } from '@editorjs/editorjs';
 import { handleUploadJsonToIpfs } from 'utils/uploadJsonToIpfs';
 import { useAuthor } from 'hooks/useAuthor';
 import useCurrentUser from 'hooks/useCurrentUser';
 import PaymentModel from 'components/PaymentModel';
 import { FlowLogo } from 'images';
+import ContentEditable from 'react-contenteditable';
+import { subscribeTxStatus } from 'utils/subscribeTxStatus';
+import Loader from 'components/Loader';
+import { CoverImage } from 'components/CoverImage';
+import { handleUploadFileToIPFS } from 'utils/uploadFileToIpfs';
 
 const titleState = atom<string>({
     key: 'titleState',
-    default: "Enter Title",
+    default: "",
   });
   
 function Editor() {
@@ -38,14 +43,19 @@ function Editor() {
     const user = useCurrentUser();
     
     const { author } = useAuthor(user?.addr);
+    const titleStateValue = useRecoilValue(titleState)
 
+    const titleValue = useRef(titleStateValue);
+
+    const [image, setImage] = useState(null);
+    const [ loading, setLoading ] = useState(false)
     const [ article, setArticle ] = useState<ArticleType>(demoPost);
     const [ title, setTitle] = useRecoilState<string>(titleState)
     const [ isPreview, setIsPreview ] = useState(false);
     const [blogData, setBlogData] = React.useState<OutputData>()
     const [price, setPrice] = useState<number>(0)
-
     const [show, setShow] = useState(false);
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
@@ -54,8 +64,31 @@ function Editor() {
         handleClose()
     }
 
+    const handleTitleChange = (e: any) => {
+        titleValue.current = e.target.value
+        setTitle(e.target.value)
+    }
+
     const handleCreateArticle = async () => {
-        const ipfsHash = await handleUploadJsonToIpfs(blogData)
+        let ipfsImageHash = ""
+        try {
+            if (image) {
+                setLoading(true)
+                ipfsImageHash = await handleUploadFileToIPFS(image, new Date().toTimeString())
+            }
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+        }
+
+        let ipfsHash = ""
+        try {
+            setLoading(true)
+            ipfsHash = await handleUploadJsonToIpfs(blogData)
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+        }
 
         const newArticle: ArticleForIPFS = {
             authorAddress: author.address,
@@ -77,16 +110,16 @@ function Editor() {
                 cadence: CreateArticle,
                 args: (arg: any, t: any) => [arg(title, t.String), 
                                    arg(author?.description, t.String), 
-                                   arg("https://www.goodmorningimagesforlover.com/wp-content/uploads/2018/11/jfgjkld22cv.jpg", t.String), 
-                                   arg("0.0", t.UFix64), 
+                                   arg(ipfsImageHash == "" ? "" : `https://ipfs.io/ipfs/${ipfsImageHash}`, t.String), 
+                                   arg(price.toFixed(1).toString(), t.UFix64), 
                                    arg(`https://ipfs.io/ipfs/${ipfsHash}`, t.String)]
               })
-
-            fcl.tx(transactionId).subscribe((res: any) => {          
-                console.log(res)
-            })
+              titleValue.current = ""
+              subscribeTxStatus(transactionId, navigate)
         } catch (e) {
             console.error(e)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -117,6 +150,9 @@ function Editor() {
             </div>
         </div>
     }
+
+    if (loading) return <Loader />
+
     return (
         <BodyLayout>
             {/* add author img and name on top left corner and publish button on top right */}
@@ -150,12 +186,19 @@ function Editor() {
                     
                 </div>
                 <div className='w-1/2 mb-10'>
-                    <div
-                        className='title-class max-w-screen-md text-7xl overflow-auto bg-gray-50 focus:outline-none'
-                        contentEditable
-                        dangerouslySetInnerHTML={{ __html: title}}
-                        onInput={(e) => {setTitle(e.currentTarget.textContent)}}
-                    />
+                    <CoverImage setImage={setImage} />
+                    <ContentEditable
+                        id='blog-title-editor'
+                        className='title-class mt-10 cursor-text max-w-screen-md text-7xl font-black text-center overflow-auto bg-gray-50 focus:outline-none'
+                        html={titleValue.current} 
+                        placeholder="Enter Title"
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                const editor = document.getElementById('blog-title-editor');
+                            }
+                        }}
+                        onChange={handleTitleChange} />
                 </div>
                 <EditorTools onChange={(data) => setBlogData(data)}/>
             </div>

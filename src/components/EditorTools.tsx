@@ -35,10 +35,9 @@ const blocks = {
   blocks: [
     {
       id: "sheNwCUP5A",
-      type: "header",
+      type: "paragraph",
       data: {
-        text: "Editor.js",
-        level: 1
+        text: "Let's Start Writing!"
       }
     }
   ]
@@ -70,9 +69,8 @@ function EditorTools({ onChange }: EditorToolsProps) {
     onChange(outputData)
   }
 
-
   return (
-    <div className='w-screen mx-auto bg-red-300'>
+    <div className='w-screen mx-auto'>
       <ReactEditorJS 
         defaultValue={editorData} 
         tools={{ 
@@ -84,7 +82,6 @@ function EditorTools({ onChange }: EditorToolsProps) {
           header: {
             class: Header,
             config: {
-              placeholder: 'Enter a header',
               levels: [1, 2, 3],
               defaultLevel: 1
             }
