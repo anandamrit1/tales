@@ -1,0 +1,74 @@
+{
+	"contracts": {
+		"FlowMeiumContract": {
+			"source": "src/cadence/contracts/FlowMeiumContract.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7",
+				"mainnet": "ee837a2c3d2e13a4",
+				"testnet": "909fa9dc860f58fc"
+			}
+		},
+		"MetadataViews": {
+			"source": "src/cadence/standard_contracts/MetadataViews.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		},
+		"NonFungibleToken": {
+			"source": "src/cadence/standard_contracts/NonFungibleToken.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		}
+	},
+	"networks": {
+		"emulator": "127.0.0.1:3569",
+		"mainnet": "access.mainnet.nodes.onflow.org:9000",
+		"testnet": "access.devnet.nodes.onflow.org:9000"
+	},
+	"accounts": {
+		"emulator-account": {
+			"fromFile": "./emulator.private.json"
+		},
+		"tales": {
+			"address": "909fa9dc860f58fc",
+			"key": {
+				"type": "file",
+				"location": "tales.pkey"
+			}
+		},
+		"talesv1": {
+			"address": "44123a11bae69029",
+			"key": {
+				"type": "file",
+				"location": "talesv1.pkey"
+			}
+		},
+		"testaccountdhalla": {
+			"address": "ee837a2c3d2e13a4",
+			"key": {
+				"type": "file",
+				"location": "testaccountdhalla.pkey"
+			}
+		}
+	},
+	"deployments": {
+		"emulator": {
+			"emulator-account": [
+				"NonFungibleToken",
+				"MetadataViews",
+				"FlowMeiumContract"
+			]
+		},
+		"mainnet": {
+			"testaccountdhalla": [
+				"FlowMeiumContract"
+			]
+		},
+		"testnet": {
+			"tales": [
+				"FlowMeiumContract"
+			]
+		}
+	}
+}
