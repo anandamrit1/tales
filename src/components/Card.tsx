@@ -22,7 +22,7 @@ const ArticleCard = ({article} : ArticleCardProps) => {
       />
       
         <p className='text-sm p-4'>
-          {new Date(article.createdAt).toLocaleDateString()}
+          {new Date(parseInt(article.createdAt) * 1000).toLocaleDateString()}
         </p>
         <h2 className="text-base font-medium text-gray-800 px-4">{article.title}</h2>
       </div>
