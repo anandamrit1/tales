@@ -5,7 +5,7 @@ import * as fcl from '@onflow/fcl'
 import GetFindProfile from '../cadence/scripts/GetFindProfile.cdc'
 // @ts-ignore
 import GetAddressFromFindName from '../cadence/scripts/GetAddressFromFindName.cdc'
-import { defaultAuthor } from "utils/constants";
+import { defaultAuthor, demoAuthor } from "utils/constants";
 import { Author } from "types/types";
 
 export type useAuthorType = {
@@ -57,9 +57,9 @@ export const useAuthor = (address: string): useAuthorType => {
         setCurrAuthor(tempAuthor)
     }, [address])
 
-    useEffect(() => {
-        if (address) getProfile()
-    }, [address])
+    // useEffect(() => {
+    //     if (address) getProfile()
+    // }, [address])
 
-    return { author: currAuthor, isAuthorLoading}
+    return { author: demoAuthor, isAuthorLoading: false}
 }

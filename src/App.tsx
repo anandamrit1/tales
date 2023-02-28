@@ -10,6 +10,7 @@ import MyArticles from 'pages/MyArticles';
 import Editor from 'pages/Editor';
 import Subscribers from 'pages/Subscribers';
 import Auth from 'components/Auth';
+import ClaimedPosts from 'pages/CliamedPosts';
 
 
 function App() {
@@ -34,6 +35,16 @@ function App() {
               <Auth>
                 <ThemeProvider>
                   <Subscribers />    
+                </ThemeProvider>
+              </Auth>
+            } 
+          />
+          <Route 
+            path="/claimed-posts" 
+            element={
+              <Auth>
+                <ThemeProvider>
+                  <ClaimedPosts />    
                 </ThemeProvider>
               </Auth>
             } 

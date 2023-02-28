@@ -72,7 +72,7 @@ function EditorTools({ onChange }: EditorToolsProps) {
 
 
   return (
-    <div className='w-screen mx-auto '>
+    <div className='w-screen mx-auto bg-red-300'>
       <ReactEditorJS 
         defaultValue={editorData} 
         tools={{ 

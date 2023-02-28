@@ -25,6 +25,8 @@ import { OutputData } from '@editorjs/editorjs';
 import { handleUploadJsonToIpfs } from 'utils/uploadJsonToIpfs';
 import { useAuthor } from 'hooks/useAuthor';
 import useCurrentUser from 'hooks/useCurrentUser';
+import PaymentModel from 'components/PaymentModel';
+import { FlowLogo } from 'images';
 
 const titleState = atom<string>({
     key: 'titleState',
@@ -38,12 +40,22 @@ function Editor() {
     const { author } = useAuthor(user?.addr);
 
     const [ article, setArticle ] = useState<ArticleType>(demoPost);
-    const [ title, setTitle ] = useRecoilState<string>(titleState)
+    const [ title, setTitle] = useRecoilState<string>(titleState)
     const [ isPreview, setIsPreview ] = useState(false);
     const [blogData, setBlogData] = React.useState<OutputData>()
+    const [price, setPrice] = useState<number>(0)
+
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    const handlePriceChange = (val : number) => {
+        setPrice(val)
+        handleClose()
+    }
 
     const handleCreateArticle = async () => {
-        const ipfsHash = await handleUploadJsonToIpfs(article.content)
+        const ipfsHash = await handleUploadJsonToIpfs(blogData)
 
         const newArticle: ArticleForIPFS = {
             authorAddress: author.address,
@@ -57,12 +69,13 @@ function Editor() {
             likes: 0,
             readTime: 10,
             title: article.title,
+            price: price
         }
         
         try {
             const transactionId = await fcl.mutate({
                 cadence: CreateArticle,
-                args: (arg: any, t: any) => [arg(newArticle.title, t.String), 
+                args: (arg: any, t: any) => [arg(title, t.String), 
                                    arg(author?.description, t.String), 
                                    arg("https://www.goodmorningimagesforlover.com/wp-content/uploads/2018/11/jfgjkld22cv.jpg", t.String), 
                                    arg("0.0", t.UFix64), 
@@ -90,6 +103,7 @@ function Editor() {
             likes: 0,
             readTime: 10,
             title: title,
+            price: price
         }
 
         return <div>
@@ -113,12 +127,18 @@ function Editor() {
                         <img src={author?.img} alt={author?.name} className='w-10 h-10 rounded-full' />
                         <p className='px-2'>{author?.name}</p>
                     </div>
-                    <div className='flex gap-8'>
+                    <div className='flex'>
                         <button
                             className="bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold py-2 px-6 rounded-lg cursor-pointer"
                             onClick={() => setIsPreview(true)}
                         >
                             Preview
+                        </button>
+                        <button
+                            className="bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold py-2 px-6 flex flex-row items-center rounded-lg cursor-pointer mx-3 align-middle"
+                            onClick={handleShow}
+                        >
+                            Price: {price == 0 ? " Free" : <div className='flex flex-row ml-1 items-center'>{price} <img src={FlowLogo} className="h-5 w-5 ml-1"/></div>}
                         </button>
                         <button
                             className="bg-green-900 hover:bg-green-800 text-white font-bold py-2 px-6 rounded-lg cursor-pointer"
@@ -134,11 +154,20 @@ function Editor() {
                         className='title-class max-w-screen-md text-7xl overflow-auto bg-gray-50 focus:outline-none'
                         contentEditable
                         dangerouslySetInnerHTML={{ __html: title}}
-                        onInput={(e) => setTitle(e.currentTarget.textContent)}
+                        onInput={(e) => {setTitle(e.currentTarget.textContent)}}
                     />
                 </div>
                 <EditorTools onChange={(data) => setBlogData(data)}/>
             </div>
+            {
+                show && 
+                <div>
+                    <div onClick={handleClose} className="absolute top-0 left-0 w-screen h-screen"></div>
+                    <div className="absolute top-20 right-4 z-50">
+                        <PaymentModel onSubscribe={handlePriceChange} priceInitial={price} />
+                    </div>
+                </div>
+            }
         </BodyLayout>
     )
 }

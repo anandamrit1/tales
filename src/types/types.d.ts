@@ -23,6 +23,7 @@ export type ArticleType = {
     createdAt: string;
     id: string;
     likes: number;
+    price: number;
 }
 
 export type ArticleForIPFS = {
@@ -37,4 +38,5 @@ export type ArticleForIPFS = {
     createdAt: string;
     id: string;
     likes: number;
+    price: number;
 }

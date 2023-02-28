@@ -22,6 +22,7 @@ export const demoPost = {
     createdAt: "2022-02-12T09:00:00.000Z",
     id: "123",
     likes: 0,
+    price: 0
   }
   
 export const demoAuthor = {

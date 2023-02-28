@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Logo } from "../images"
 
-type TabType = "Articles" | "Subscribers" | "Settings";
+type TabType = "Articles" | "Subscribers" | "Claimed";
 const NavData: NavBarGroupData = [
       {
         title: "Articles",
@@ -20,8 +20,8 @@ const NavData: NavBarGroupData = [
         imgSrc: "people",
       },
       {
-        title: "Settings",
-        route: "/settings",
+        title: "Claimed",
+        route: "/claimed-posts",
         imgSrc: "settings",
       },
     ]

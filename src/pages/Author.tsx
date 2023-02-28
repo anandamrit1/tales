@@ -1,9 +1,15 @@
 import ArticleCard from 'components/Card'
 import { useAuthor } from 'hooks/useAuthor'
+import useCurrentUser from 'hooks/useCurrentUser'
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { ArticleType, Author } from 'types/types'
 import { demoAuthor, demoPost } from 'utils/constants'
+// @ts-ignore
+import * as fcl from '@onflow/fcl'
+// @ts-ignore
+import GetAllMyArticles from '../cadence/scripts/GetAllMyArticles.cdc'
+import { OutputData } from '@editorjs/editorjs'
 
 export type AuthorProps = {
     author: Author
@@ -16,13 +22,59 @@ function AuthorPage() {
     const params = useParams()
 
     const { author, isAuthorLoading } = useAuthor(params.id)
-    
+
+    const user = useCurrentUser()
+
+   
+
     useEffect(() => {
+        const getMyArticles = async () => {
+            let res;
+            console.log("Addd : ", user?.addr)
+            try {
+              res = await fcl.query({
+                cadence: GetAllMyArticles,
+                args: (arg: any, t: any) => [arg(user?.addr, t.Address)]
+              })
+            } catch(e) { res = []; console.log(e) }
+            console.log("Raw Articels ; ", res)
+            return res
+        }
+
         const getArticlesByAuthor = async (address: string) => {
-            const articles = [demoPost]
+            //const articles = [demoPost]
+            const articles = await getMyArticles()
+            const myArticles = await Promise.all(articles.map(async (a: any) => { 
+                // pub let id: UInt64
+                // pub let title: String
+                // pub let description: String
+                // pub let author: Address
+                // pub let image: String
+                // pub let price: UFix64
+                // pub let data: String
+                // pub let metadata: {String: String}
+                let p = a.data as string
+                
+                const data: OutputData = await fetch(p.replace("ipfs.io", "nftstorage.link")).then(res => res.json())
+
+                return {
+                    authorAddress: a.author,
+                    authorName: "",
+                    authorDesc: "",
+                    authorImg: "",
+                    title: a.title,
+                    content: data,
+                    coverImg: a.image,
+                    readTime: 0,
+                    createdAt: "",
+                    id: a.id,
+                    likes: 0,
+                }
+            })) 
+            console.log(myArticles)
             // await fetch(`http://localhost:3000/api/articles?author=${address}`)
             //     .then(res => res.json())
-            setArticles(articles)
+            setArticles(myArticles)
         }
         if (author && author.address) {
             if (author.name)
@@ -30,7 +82,7 @@ function AuthorPage() {
 
             getArticlesByAuthor(author.address)
         }
-    }, [author])
+    }, [author, user])
     
     if (loading || isAuthorLoading) return <>Loading</>
     if (!author) return <div className='flex items-center justify-center text-lg'>Author not found</div>

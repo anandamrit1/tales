@@ -8,6 +8,7 @@ import { useAuthor } from "hooks/useAuthor";
 // @ts-ignore
 import edjsParser from 'editorjs-parser'
 import SubscribeModel from "components/SubscribeModel";
+import { FlowLogo } from "images";
 
 
 type PostProps = {
@@ -77,8 +78,8 @@ const Article = ({ post, isPreview = false, authorIdForPreview }: PostProps) => 
                         </div>
                     </div>
                     <div className="flex gap-6">
-                        <Button variant="tertiary" size="small" onClick={handleShow}>
-                            Pay to read
+                        <Button variant="tertiary" size="small" onClick={() => {(post.price > 0) && handleShow()}}>
+                            {getPrice({price: post.price})}
                         </Button>
                         <Button variant="primary" size="small" tone="green" onClick={handleShow}>
                             Subscribe
@@ -142,5 +143,10 @@ const Article = ({ post, isPreview = false, authorIdForPreview }: PostProps) => 
         </div>
     );
 };
+
+function getPrice({price} : {price: number}) {
+    if(price == 0) return <>{"Free to read"}</>
+    return <div className='flex flex-row items-center'>{"Pay"} <img src={FlowLogo} className="h-5 w-5 mx-1"/> {`${price}  to read`}</div>
+}
 
 export default Article;
