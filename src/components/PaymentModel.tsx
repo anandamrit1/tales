@@ -16,7 +16,7 @@ function PaymentModel({priceInitial, onSubscribe} : PaymentModelProps) {
     <div>
         <div className="flex flex-col items-center justify-center z-[10000]">
             <div className="flex flex-col bg-white-100 rounded-lg w-96 p-6">
-                <p className="text-xl font-black ">Enter <span className="text-green-900">Price</span></p>
+                <p className="text-xl font-black ">Enter Price in <span className="text-green-900">Flow</span></p>
                 <input onChange={(e) => setPrice(Number(e.target.value))} value={price} className="px-4 py-3 rounded-lg outline-none border-[1px] border-gray-300 mt-4" type="number" step="0.1" placeholder="0.0" />
                 <button onClick={handleSubscribe} className="bg-green-900 hover:bg-green-800 text-white font-bold py-2 px-6 rounded-lg cursor-pointer mt-4">Set Price</button>
             </div> 

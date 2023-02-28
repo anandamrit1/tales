@@ -65,3 +65,9 @@
     color: #888;
     font-style: italic;
   }
+
+[contenteditable=true]:empty:before {
+    content: attr(placeholder);
+    display: block;
+    color: #aaa;
+  }
