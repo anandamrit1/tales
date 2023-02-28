@@ -55,7 +55,7 @@ function ClaimedPosts() {
           coverImg: a.image,
           readTime: 0,
           createdAt: new Date(parseInt(a.dateReceived) * 1000).toDateString(),
-          id: a.id,
+          id: a.postId,
           likes: 0,
           price: Number(a.postPrice),
         })
