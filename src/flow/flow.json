@@ -4,7 +4,7 @@
 			"source": "../cadence/contracts/FlowMeiumContract.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7",
-				"testnet": "44123a11bae69029",
+				"testnet": "909fa9dc860f58fc",
 				"mainnet": "0xee837a2c3d2e13a4"
 			}
 		},
@@ -37,6 +37,13 @@
 				"location": "talesv1.pkey"
 			}
 		},
+		"tales": {
+			"address": "909fa9dc860f58fc",
+			"key": {
+				"type": "file",
+				"location": "tales.pkey"
+			}
+		},
 		"testaccountdhalla": {
 			"address": "ee837a2c3d2e13a4",
 			"key": {
@@ -54,7 +61,7 @@
 			]
 		},
 		"testnet": {
-			"talesv1": [
+			"tales": [
 				"FlowMeiumContract"
 			]
 		},
