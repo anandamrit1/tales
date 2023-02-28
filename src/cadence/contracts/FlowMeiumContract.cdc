@@ -1,6 +1,6 @@
-import FungibleToken from 0xee82856bf20e2aa6
-import NonFungibleToken from 0xf8d6e0586b0a20c7
-import MetadataViews from 0xf8d6e0586b0a20c7
+import FungibleToken from 0x9a0766d93b6608b7
+import NonFungibleToken from 0x631e88ae7f1d7c20
+import MetadataViews from 0x631e88ae7f1d7c20
 
 pub contract FlowMeiumContract: NonFungibleToken {
     // Events
@@ -28,28 +28,33 @@ pub contract FlowMeiumContract: NonFungibleToken {
         pub let serial: UInt64
         pub let author: Address
         pub let postId: UInt64
-        pub let price: UFix64
+        pub let postPrice: UFix64
+        pub let postTitle: String
+        pub let postImage: String
+        pub let postCreateDate: UFix64
 
-        init(_id: UInt64, _serial: UInt64, _author: Address, _postId: UInt64, _price: UFix64) {
+        init(_id: UInt64, _serial: UInt64, _author: Address, _postId: UInt64, _postPrice: UFix64, _postTitle: String, _postImage: String, _postCreateDate: UFix64) {
             self.id = _id
             self.serial = _serial
             self.author = _author
             self.postId = _postId
-            self.price = _price
+            self.postPrice = _postPrice
+            self.postTitle = _postTitle
+            self.postImage =  _postImage
+            self.postCreateDate = _postCreateDate
         }
     }
 
     pub resource NFT: NonFungibleToken.INFT, MetadataViews.Resolver {
         // The `uuid` of this resource
         pub let id: UInt64
-
-        // Some of these are also duplicated on the event,
-        // but it's necessary to put them here as well
-        // in case the FlowMeium author deletes the event
+        pub let serial: UInt64
         pub let author: Address
         pub let postId: UInt64
-        pub let serial: UInt64
-        pub let price: UFix64
+        pub let postPrice: UFix64
+        pub let postTitle: String
+        pub let postImage: String
+        pub let postCreateDate: UFix64
 
         pub let dateReceived: UFix64
 
@@ -64,13 +69,16 @@ pub contract FlowMeiumContract: NonFungibleToken {
             return nil
         }
 
-        init(_author: Address, _postId: UInt64, _serial: UInt64, _price: UFix64) {
+        init(_author: Address, _postId: UInt64, _serial: UInt64, _postPrice: UFix64, _postTitle: String, _postImage: String, _postCreateDate: UFix64) {
             self.id = self.uuid
             self.dateReceived = getCurrentBlock().timestamp
             self.postId = _postId
             self.author = _author
             self.serial = _serial
-            self.price = _price
+            self.postPrice = _postPrice
+            self.postTitle = _postTitle
+            self.postImage =  _postImage
+            self.postCreateDate = _postCreateDate
 
             FlowMeiumContract.totalSupply = FlowMeiumContract.totalSupply + 1
         }
@@ -167,12 +175,19 @@ pub contract FlowMeiumContract: NonFungibleToken {
         if let collection = account.getCapability(self.CollectionPublicPath).borrow<&{CollectionPublic}>()  {
             for id in collection.getIDs() {
                 var nft = collection.borrowFlowMeium(id: id)
-                allData.append(NftData(_id: nft!.id, _serial: nft!.serial, _author: nft!.author, _postId: nft!.postId, _price: nft!.price))
+                allData.append(NftData(_id: nft!.id, 
+                                       _serial: nft!.serial, 
+                                       _author: nft!.author, 
+                                       _postId: nft!.postId, 
+                                       _postPrice: nft!.postPrice,
+                                       _postTitle: nft!.postTitle,
+                                       _postImage: nft!.postImage,
+                                       _postCreateDate: nft!.postCreateDate))
             }
         }
         return allData
     }
-
+    
     // Declare the Post resource type
     pub resource Post {
         // The unique ID that differentiates each Post
@@ -371,7 +386,13 @@ pub contract FlowMeiumContract: NonFungibleToken {
             vaultRef.deposit(from: <-buyTokens)
 
             let receiverReference = recipient.borrow() ?? panic("Could not borrow reference to receiver collection")
-            receiverReference.deposit(token: <- create FlowMeiumContract.NFT(_author: self.owner!.address, _postId: postID, _serial: self.incrementSerial(postID: postID), _price: ref.price))
+            receiverReference.deposit(token: <- create FlowMeiumContract.NFT(_author: self.owner!.address, 
+                                                                            _postId: postID, 
+                                                                            _serial: self.incrementSerial(postID: postID), 
+                                                                            _postPrice: ref.price,
+                                                                            _postTitle: ref.title,
+                                                                            _postImage: ref.image, 
+                                                                            _postCreateDate: ref.createDate))
         }
 
         pub fun purchasedCount(postID: UInt64): UInt64? {
