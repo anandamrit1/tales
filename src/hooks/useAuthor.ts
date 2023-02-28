@@ -57,9 +57,9 @@ export const useAuthor = (address: string): useAuthorType => {
         setCurrAuthor(tempAuthor)
     }, [address])
 
-    // useEffect(() => {
-    //     if (address) getProfile()
-    // }, [address])
+    useEffect(() => {
+        if (address) getProfile()
+    }, [address])
 
-    return { author: demoAuthor, isAuthorLoading: false}
+    return { author: currAuthor, isAuthorLoading: false}
 }
