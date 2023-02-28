@@ -26,10 +26,10 @@ export const demoPost = {
   }
   
 export const demoAuthor = {
-  name: "",
+  name: "Gaurav",
   email: "",
   date: "",
-  address: "0x0",
+  address: "",
   description: "",
   img: "https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_0.jpg"
 };
@@ -130,3 +130,7 @@ const profile = {
 export const pinataTokenJWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI2NTBhNDU2NS02ZjM0LTQ1YTYtYmVmOS04ZmIxMGE0NmVlN2EiLCJlbWFpbCI6ImdhdXJhdmRoYWxsYTE0OTNAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6Ijk2ZmUyNTE3MTViNTU4NGE0MTk1Iiwic2NvcGVkS2V5U2VjcmV0IjoiMWM1MjFiMDRiMjUyODM5MGU4MTkwNDU0NDk4MmYyNjJlMmZkY2JkNzc0YjI1YzI2YjQxM2RjM2VjODgzNzk1YSIsImlhdCI6MTY3NzQzNTY2N30.w8elVwSZ_U62af_MVKlVcawik9dQ-eLsoUVE4osqzlc"
 export const pinataApiKey = "96fe251715b5584a4195"
 export const pinataApiSecret = "1c521b04b2528390e81904544982f262e2fdcbd774b25c26b413dc3ec883795a"
+
+
+export const subscribeEndpoint = "http://localhost:5001/app/subscribe"
+export const getSubscribersEndpoint = "http://localhost:5001/app/all-subscribers"
