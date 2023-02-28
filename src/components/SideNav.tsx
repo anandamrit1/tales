@@ -30,6 +30,7 @@ function SideNav({ selectedTab }: { selectedTab: TabType }) {
   const user = useCurrentUser()
   const { author } = useAuthor(user?.addr)
 
+  const navigate = useNavigate();
   return (
     <>
       <div className="overflow-y-auto py-4 px-3 bg-white-100 h-full w-[300px] flex flex-col justify-between">
@@ -47,7 +48,7 @@ function SideNav({ selectedTab }: { selectedTab: TabType }) {
                 })}
             </div>
         </div>
-        <div className="flex pl-4">
+        <div className="flex pl-4 cursor-pointer" onClick={() => navigate(`/${user?.addr}`)}>
             {
               author?.img && 
               <img 
@@ -59,7 +60,7 @@ function SideNav({ selectedTab }: { selectedTab: TabType }) {
             <div className="flex flex-col ml-2 w-52">
                 {author?.name && <div className="text-sm font-semibold">{author?.name}</div>}
                 <div className="text-xs text-gray-500">
-                    {author?.findName != "" ? author?.findName : user?.addr}
+                    {author?.findName ? author?.findName : user?.addr}
                 </div>
             </div>
             <span onClick={() => fcl.unauthenticate()} className="material-icons text-base px-2 pt-1 w-8 h-8 hover:bg-gray-100 rounded-full self-center cursor-pointer">logout</span>

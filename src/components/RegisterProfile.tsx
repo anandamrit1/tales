@@ -5,20 +5,21 @@ import SideNav from './SideNav'
 import * as fcl from '@onflow/fcl'
 // @ts-ignore
 import CreateFindProfile from '../cadence/transactions/CreateFindProfile.cdc'
+import { subscribeTxStatus } from 'utils/subscribeTxStatus'
 
 function RegisterProfile() {
     const [userName, setUserName] = React.useState("")
 
     const handleRegister = async() => {
         try {
-            await fcl.mutate({
+            const txId = await fcl.mutate({
                 cadence: CreateFindProfile,
-                args: (arg: any, t: any) => [arg(userName, t.String)]
+                args: (arg: any, t: any) => [arg(userName, t.String)],
+                limit: 7000,
             })
+            subscribeTxStatus(txId)
         } catch (error) {
             console.error(error)
-        } finally {
-            window.location.reload()
         }
     }
 
