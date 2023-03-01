@@ -3,7 +3,6 @@ import { BodyLayout } from 'components/BodyLayout'
 import SideNav from 'components/SideNav'
 import React, { useEffect } from 'react'
 import { ArticleType } from 'types/types'
-import { demoPost } from 'utils/constants'
 import useCurrentUser from 'hooks/useCurrentUser'
 // @ts-ignore
 import * as fcl from '@onflow/fcl'
@@ -34,27 +33,28 @@ function ClaimedPosts() {
       const myArticles: ArticleType[] = await Promise.all(articles.map(async (a: any) => {
         let p = a.data as string
 
-        // const data: any = await fetch(p.replace("ipfs.io", "nftstorage.link")).then(res => res.json())
+      //   {
+      //     "id": "136710733",
+      //     "serial": "1",
+      //     "author": "0xdb86c6c5e0c5b077",
+      //     "postId": "136710183",
+      //     "postPrice": "10.00000000",
+      //     "postTitle": "Hello Testnet - Paid",
+      //     "postImage": "https://ipfs.io/ipfs/QmVaAFxVScCb7cZoWJf8QX4Rrv9NTAf7S3bYyfXk5M6Vcr",
+      //     "postCreateDate": "1677612139.00000000",
+      //     "dateReceived": "1677612540.00000000"
+      // }
 
-        // pub let id: UInt64
-        // pub let serial: UInt64
-        // pub let author: Address
-        // pub let postId: UInt64
-        // pub let postPrice: UFix64
-        // pub let postTitle: String
-        // pub let postImage: String
-        // pub let postCreateDate: UFix64
-        // pub let dateReceived: UFix64
         return Promise.resolve({
           authorAddress: a.author,
           authorName: "",
-          authorDesc: "",
+          authorDesc: new Date(parseInt(a.postCreateDate) * 1000).toLocaleDateString(),
           authorImg: "",
           title: a.postTitle,
           content: "",
-          coverImg: a.image,
+          coverImg: a.postImage,
           readTime: 0,
-          createdAt: new Date(parseInt(a.dateReceived) * 1000).toDateString(),
+          createdAt: new Date(parseInt(a.dateReceived) * 1000).toLocaleDateString(),
           id: a.postId,
           likes: 0,
           price: Number(a.postPrice),

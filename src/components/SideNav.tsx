@@ -5,7 +5,7 @@ import { useAuthor } from 'hooks/useAuthor';
 import useCurrentUser from 'hooks/useCurrentUser';
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Logo } from "../images"
+import { BrandLogo } from "../images"
 
 type TabType = "Articles" | "Subscribers" | "Claimed";
 const NavData: NavBarGroupData = [
@@ -22,7 +22,7 @@ const NavData: NavBarGroupData = [
       {
         title: "Claimed",
         route: "/claimed-posts",
-        imgSrc: "settings",
+        imgSrc: "copyright",
       },
     ]
 
@@ -70,16 +70,31 @@ function SideNav({ selectedTab }: { selectedTab: TabType }) {
   );
 }
 
-function NavBarLogo() {
+export function NavBarLogo({isHomePage = false}: {isHomePage?: boolean}) {
   return (
-    <a href="#" className="flex items-center pl-2.5 mb-5">
+    <a href="#" className={classNames("flex items-center pl-2.5 mb-5",
+    {
+      "mt-4": isHomePage
+    }
+    )}>
       <img
-        src={Logo}
-        className="mr-3 h-6 sm:h-7"
-        alt="Flowbite Logo"
+        src={BrandLogo}
+        className={
+          classNames("mr-3",
+        {
+          "h-12 ml-10": isHomePage,
+          "h-8": !isHomePage
+        }
+      )}
+        alt="Tales"
       />
-      <span className="self-center text-xl font-semibold whitespace-nowrap text-white">
-        Tales 
+      <span className={
+        classNames("self-center text-xl font-black whitespace-nowrap text-white",
+          {
+            "text-3xl": isHomePage
+          }
+        )}>
+        TALES
       </span>
     </a>
   );

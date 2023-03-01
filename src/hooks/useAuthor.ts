@@ -42,19 +42,21 @@ export const useAuthor = (address: string): useAuthorType => {
                 args: (arg: any, t: any):any => [arg(addressToSearch, t.Address)]
             })
             console.log("Profile : ", res)
+            tempAuthor.name = res?.name
+            tempAuthor.findName = res?.findName ?? tempAuthor.findName
+            tempAuthor.description = res?.description ?? tempAuthor.description
+            tempAuthor.img = res?.avatar
+            tempAuthor.address = res?.address
+            
+            setCurrAuthor(tempAuthor)
         } catch(e) {
             console.log("Profile Error: ", e)
+            setCurrAuthor(undefined)
         } finally {
             setIsAuthorLoading(false)
         }
 
-        tempAuthor.name = res?.name
-        tempAuthor.findName = res?.findName ?? tempAuthor.findName
-        tempAuthor.description = res?.description ?? tempAuthor.description
-        tempAuthor.img = res?.avatar
-        tempAuthor.address = res?.address
         
-        setCurrAuthor(tempAuthor)
     }, [address])
 
     useEffect(() => {

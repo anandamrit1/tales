@@ -11,7 +11,7 @@ module.exports = {
       Satoshi14px: ['Satoshi14px', 'Helvetica', 'Arial', 'sans-serif'],
       Satoshi16px: ['Satoshi16px', 'Helvetica', 'Arial', 'sans-serif'],
       Satoshi20px: ['Satoshi20px', 'Helvetica', 'Arial', 'sans-serif'],
-      Satoshi24px: ['Satoshi24px', 'Helvetica', 'Arial', 'sans-serif'],
+      Satoshi24px: ['Satoshi', 'Helvetica', 'Arial', 'sans-serif'],
     },
     colors: {
       ...defaultTheme.colors,
@@ -62,6 +62,7 @@ module.exports = {
       custom: {
         100: '#29a87400',
         200: '#29a87452',
+        300: '#12df85',
       },
     },
     extend: {

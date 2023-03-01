@@ -32,6 +32,7 @@ import { subscribeTxStatus } from 'utils/subscribeTxStatus';
 import Loader from 'components/Loader';
 import { CoverImage } from 'components/CoverImage';
 import { handleUploadFileToIPFS } from 'utils/uploadFileToIpfs';
+import PreviewArticle from 'components/PreviewArticle';
 
 const titleState = atom<string>({
     key: 'titleState',
@@ -146,7 +147,7 @@ function Editor() {
                     <h2>Preview</h2>
                     <span onClick={() => setIsPreview(false)} className='material-icons self-center hover:bg-green-600 p-2 cursor-pointer rounded-full'>close</span>
                 </div>
-                <Post authorIdForPreview={author.address} isPreview post={article}/>
+                <PreviewArticle author={author} article={article}/>
             </div>
         </div>
     }
