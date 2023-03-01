@@ -4,9 +4,7 @@
 // @ts-ignore
 import * as fcl from "@onflow/fcl";
 // @ts-ignore
-import GetFindProfile from "../cadence/scripts/GetFindProfile.cdc";
-// @ts-ignore
-import GetAllMyArticles from '../cadence/scripts/GetAllMyArticles.cdc'
+import GetAllMyArticles from "../cadence/scripts/GetAllMyArticles.cdc";
 
 import React, { useEffect } from "react";
 import { ArticleType } from "types/types";
@@ -16,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import useCurrentUser from "hooks/useCurrentUser";
 import { useAuthor } from "hooks/useAuthor";
 import RegisterProfile from "components/RegisterProfile";
+import { LoaderAnimation } from "components/Loader";
 
 function MyArticles() {
   const [data, setData] = React.useState<ArticleType[]>([]); // data is an array of articles
@@ -24,51 +23,57 @@ function MyArticles() {
   const navigate = useNavigate();
   const user = useCurrentUser();
 
-  const { author, isAuthorLoading } = useAuthor(user.addr)
+  const { author, isAuthorLoading } = useAuthor(user.addr);
 
   useEffect(() => {
     const getMyArticles = async (address: string) => {
-        let res;
-        try {
-          res = await fcl.query({
-            cadence: GetAllMyArticles,
-            args: (arg: any, t: any) => [arg(address, t.Address), arg(address, t.Address)]
-          })
-        } catch(e) { res = []; console.log(e) }
-        console.log("Res: ", res)
-        return res
-    }
+      let res;
+      try {
+        res = await fcl.query({
+          cadence: GetAllMyArticles,
+          args: (arg: any, t: any) => [
+            arg(address, t.Address),
+            arg(address, t.Address),
+          ],
+        });
+      } catch (e) {
+        res = [];
+      }
+      return res;
+    };
 
     const getArticlesByAuthor = async (address: string) => {
-        const articles = await getMyArticles(address)
+      const articles = await getMyArticles(address);
 
-        const myArticles = await Promise.all(articles.map(async (a: any) => { 
-            let p = a.data as string
-            
-            // const data: OutputData = await fetch(p.replace("ipfs.io", "nftstorage.link")).then(res => res.json())
+      const myArticles = await Promise.all(
+        articles.map(async (a: any) => {
+          let p = a.data as string;
 
-            return Promise.resolve({
-                authorAddress: a.author,
-                authorName: "",
-                authorDesc: "",
-                authorImg: "",
-                title: a.title,
-                content: "",
-                coverImg: a.image,
-                readTime: 0,
-                createdAt: new Date(parseInt(a.createDate)* 1000).toDateString(),
-                id: a.id,
-                likes: 0,
-            })
-        })) 
+          // const data: OutputData = await fetch(p.replace("ipfs.io", "nftstorage.link")).then(res => res.json())
 
-        setData(myArticles)
-    }
+          return Promise.resolve({
+            authorAddress: a.author,
+            authorName: "",
+            authorDesc: "",
+            authorImg: "",
+            title: a.title,
+            content: "",
+            coverImg: a.image,
+            readTime: 0,
+            createdAt: new Date(parseInt(a.createDate) * 1000).toDateString(),
+            id: a.id,
+            likes: 0,
+          });
+        })
+      );
+
+      setData(myArticles);
+    };
 
     if (user && user?.addr) {
-        getArticlesByAuthor(user?.addr)
+      getArticlesByAuthor(user?.addr);
     }
-}, [user])
+  }, [user]);
 
   useEffect(() => {
     if (!user.loggedIn) {
@@ -76,20 +81,20 @@ function MyArticles() {
     }
   }, [user]);
 
-  if (isAuthorLoading) {
+  if (!author) {
     return (
       <BodyLayout>
         <SideNav selectedTab="Articles" />
-        <div className="flex flex-col p-10">
-          <div className="flex flex-col items-center">
-            <p>Loading...</p>
+        <div className="flex flex-col p-10 w-full items-center">
+          <div className="flex flex-col w-full h-full">
+            <LoaderAnimation />
           </div>
         </div>
       </BodyLayout>
     );
   }
 
-  if (!author?.address) {
+  if (!isAuthorLoading && author && !author.address) {
     // register the users name in a input box and a submit button with better styles
     return <RegisterProfile />;
   }
@@ -118,28 +123,26 @@ function MyArticles() {
             ) : (
               data?.map((article: ArticleType) => (
                 <>
-                    <div
+                  <div
                     key={article.id}
-                    onClick={() =>
-                        navigate(`/${user?.addr}/${article.id}`)
-                    } 
+                    onClick={() => navigate(`/${user?.addr}/${article.id}`)}
                     className="flex justify-between w-[840px] bg-white-100 p-8 my-2 rounded-2xl cursor-pointer"
-                    >
+                  >
                     <div className="flex flex-col">
-                        <h2 className="text-lg font-black">{article.title}</h2>
-                        <p className="text-sm text-gray-400">
-                        {new Date(parseInt(article.createdAt) * 1000).toLocaleDateString()}
-                        </p>
+                      <h2 className="text-lg font-black">{article.title}</h2>
+                      <p className="text-sm text-gray-400">
+                        {article.createdAt}
+                      </p>
                     </div>
                     <div>
-                        <span className="material-icons self-center hover:bg-gray-100 p-2 cursor-pointer rounded-full">
-                            edit
-                        </span>
-                        <span className="material-icons self-center hover:bg-gray-100 p-2 cursor-pointer rounded-full">
-                            delete
-                        </span>
+                      <span className="material-icons self-center hover:bg-gray-100 p-2 cursor-pointer rounded-full">
+                        edit
+                      </span>
+                      <span className="material-icons self-center hover:bg-gray-100 p-2 cursor-pointer rounded-full">
+                        delete
+                      </span>
                     </div>
-                    </div>
+                  </div>
                 </>
               ))
             )}

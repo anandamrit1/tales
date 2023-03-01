@@ -262,15 +262,15 @@ const Article = ({ post, isPreview = false, authorIdForPreview }: PostProps) => 
                                 </Tag>
                             </div>
                             <Tag size="small">
-                                {article.readTime} min read
+                                10 mins read
                             </Tag>
                         </div>
                         <Tag size="small">
-                            {new Date(parseInt(article.createdAt) * 1000).toLocaleDateString()}
+                            {article.createdAt}
                         </Tag>
                     </div>
                     {
-                        showArticle ? <div dangerouslySetInnerHTML={{ __html: parser.parse(article.content) }} className="mt-8 font-Satoshi16px text-justify">
+                        showArticle ? <div dangerouslySetInnerHTML={{ __html: parser.parse(article.content) }} className="mt-8 font-Satoshi16px leading-8 text-justify">
                         </div>
                         : <SkeletonLoader />
                     }

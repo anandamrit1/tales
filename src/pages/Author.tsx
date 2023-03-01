@@ -2,7 +2,7 @@ import ArticleCard from 'components/Card'
 import { useAuthor } from 'hooks/useAuthor'
 import useCurrentUser from 'hooks/useCurrentUser'
 import React, { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ArticleType, Author } from 'types/types'
 import { demoPost } from 'utils/constants'
 // @ts-ignore
@@ -18,8 +18,11 @@ export type AuthorProps = {
 function AuthorPage() {
     const [articles, setArticles] = React.useState<ArticleType[]>([])
     const [loading, setLoading] = React.useState<boolean>(false)
+    const [searchValue, setSearchValue] = React.useState<string>("")
 
     const params = useParams()
+    const navigate = useNavigate()
+
     const authorAddress = params.id
 
     const { author, isAuthorLoading } = useAuthor(params.id)
@@ -42,16 +45,16 @@ function AuthorPage() {
         const getArticlesByAuthor = async (address: string) => {
             const articles = await getMyArticles(address)
 
-            const myArticles = await Promise.all(articles.map(async (a: any) => { 
+            const myArticles: ArticleType[] = await Promise.all(articles.map(async (a: any) => { 
                 let p = a.data as string
                 
                 // const data: OutputData = await fetch(p.replace("ipfs.io", "nftstorage.link")).then(res => res.json())
 
                 return Promise.resolve({
                     authorAddress: a.author,
-                    authorName: "",
-                    authorDesc: "",
-                    authorImg: "",
+                    authorName: author?.name,
+                    authorDesc: author?.description,
+                    authorImg: author?.img,
                     title: a.title,
                     content: "",
                     coverImg: a.image,
@@ -59,6 +62,7 @@ function AuthorPage() {
                     createdAt: new Date(parseInt(a.createDate) * 1000).toDateString(),
                     id: a.id,
                     likes: 0,
+                    price: a?.price
                 })
             })) 
 
@@ -67,18 +71,36 @@ function AuthorPage() {
         if (author && authorAddress) {
             if (author?.name)
                 document.title = `${author.name} - Tales`
-
+            
             getArticlesByAuthor(authorAddress)
         }
     }, [author, authorAddress])
     
+    const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault()
+            const authorAddress = searchValue;
+
+            setSearchValue('')
+            console.log(`/${authorAddress}`)
+            navigate(`/${authorAddress}`)
+        }
+    }
+
     if (loading || isAuthorLoading) return <>Loading</>
     if (!author) return <div className='flex items-center justify-center text-lg'>Author not found</div>
     
     return (
         <div className='flex flex-col scroll-auto'>
             <div className='w-screen h-screen'>
-                <div className='h-[40vh] bg-green-800'></div>
+                <div className='h-[30vh] bg-green-800'></div>
+                <input 
+                    className='rounded-full w-72 py-3 px-4 absolute top-4 right-4 outline-none' 
+                    placeholder='Search Authors' 
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    value={searchValue}
+                    onKeyDown={handleSearch}
+                />
                 <div className='py-10 bg-gray-100'>
                     <img
                         className='w-32 h-32 rounded-full mx-auto -mt-24 border-4 border-gray-100'
