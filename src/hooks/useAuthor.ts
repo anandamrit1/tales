@@ -29,7 +29,6 @@ export const useAuthor = (address: string): useAuthorType => {
                     args: (arg: any, t: any):any => [arg(addressToSearch, t.String)]
                 })
                 addressToSearch = res
-                console.log("Address : ", res)
             }
             if (addressToSearch === "") {
                 setCurrAuthor(tempAuthor)
@@ -41,12 +40,11 @@ export const useAuthor = (address: string): useAuthorType => {
                 cadence: GetFindProfile,
                 args: (arg: any, t: any):any => [arg(addressToSearch, t.Address)]
             })
-            console.log("Profile : ", res)
             tempAuthor.name = res?.name
             tempAuthor.findName = res?.findName ?? tempAuthor.findName
             tempAuthor.description = res?.description ?? tempAuthor.description
             tempAuthor.img = res?.avatar
-            tempAuthor.address = res?.address
+            tempAuthor.address = addressToSearch
             
             setCurrAuthor(tempAuthor)
         } catch(e) {
@@ -63,5 +61,56 @@ export const useAuthor = (address: string): useAuthorType => {
         if (address) getProfile()
     }, [address])
 
-    return { author: currAuthor, isAuthorLoading: false}
+    return { author: currAuthor, isAuthorLoading: isAuthorLoading}
+}
+
+export const useReader = (address: string): useAuthorType => {
+    const [currAuthor, setCurrAuthor] = useState<any>()
+    const [isAuthorLoading, setIsAuthorLoading] = useState<boolean>(true)
+
+    const getProfile = useCallback(async () => {
+        const tempAuthor = defaultAuthor
+        setIsAuthorLoading(true)
+        var res, addressToSearch = address;
+        try {
+            if (address.endsWith(".find")) {
+                addressToSearch = address.replace(".find", "")
+                res = await fcl.query({
+                    cadence: GetAddressFromFindName,
+                    args: (arg: any, t: any):any => [arg(addressToSearch, t.String)]
+                })
+                addressToSearch = res
+            }
+            if (addressToSearch === "") {
+                setCurrAuthor(tempAuthor)
+                setIsAuthorLoading(false)
+                return
+            }
+
+            res = await fcl.query({
+                cadence: GetFindProfile,
+                args: (arg: any, t: any):any => [arg(addressToSearch, t.Address)]
+            })
+            tempAuthor.name = res?.name
+            tempAuthor.findName = res?.findName ?? tempAuthor.findName
+            tempAuthor.description = res?.description ?? tempAuthor.description
+            tempAuthor.img = res?.avatar
+            tempAuthor.address = addressToSearch
+            
+            setCurrAuthor(tempAuthor)
+        } catch(e) {
+            console.log("Profile Error: ", e)
+            setCurrAuthor(undefined)
+        } finally {
+            setIsAuthorLoading(false)
+        }
+
+        
+    }, [address])
+
+    useEffect(() => {
+        if (address) getProfile()
+    }, [address])
+
+    return { author: currAuthor, isAuthorLoading: isAuthorLoading}
 }
