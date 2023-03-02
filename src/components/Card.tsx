@@ -30,7 +30,7 @@ const ArticleCard = ({ article }: ArticleCardProps) => {
       className="border border-gray-200 rounded-xl max-w-xl overflow-hidden h-96 flex flex-col justify-between cursor-pointer hover:border-gray-300"
     >
       <div className="">
-        <div className="w-full h-48 bg-green-900">
+        <div className="w-full h-48 bg-green-800">
           {article.coverImg && (
             <img
               className="object-cover w-full h-48"
