@@ -23,6 +23,7 @@ import { SkeletonLoader } from "components/Skeleton";
 import { getIpfsURL } from "utils/ipfs";
 import Skeleton from "react-loading-skeleton";
 
+
 type PostProps = {
     post?: ArticleType;
     isPreview?: boolean;
