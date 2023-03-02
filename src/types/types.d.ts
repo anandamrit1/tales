@@ -1,12 +1,12 @@
 import { OutputData } from "@editorjs/editorjs";
 
 export type Author = {
-    name: string;
-    email: string;
-    date: string;
+    name?: string;
+    email?: string;
+    date?: string;
     address: string;
     description: string;
-    img: string;
+    img?: string;
     articles?: ArticleType[];
     findName?: string
 };
@@ -17,7 +17,7 @@ export type ArticleType = {
     authorDesc: string;
     authorImg: string;
     title: string;
-    content: OutputData;
+    content: OutputData | undefined;
     coverImg: string;
     readTime: number;
     createdAt: string;
