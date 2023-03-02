@@ -35,7 +35,7 @@ export const demoAuthor = {
 };
   
 export const defaultAuthor = {
-  name: "Anonymous",
+  name: "",
   email: "",
   date: "",
   address: "",

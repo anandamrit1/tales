@@ -18,7 +18,6 @@ import { LoaderAnimation } from "components/Loader";
 
 function MyArticles() {
   const [data, setData] = React.useState<ArticleType[]>([]); // data is an array of articles
-  const [isLoading, setIsLoading] = React.useState(false);
 
   const navigate = useNavigate();
   const user = useCurrentUser();
@@ -93,8 +92,8 @@ function MyArticles() {
       </BodyLayout>
     );
   }
-
-  if (!isAuthorLoading && author && !author.address) {
+  console.log("Akshay author:", author)
+  if (!isAuthorLoading && author && !author.name) {
     // register the users name in a input box and a submit button with better styles
     return <RegisterProfile />;
   }
@@ -114,7 +113,6 @@ function MyArticles() {
         </div>
         <div className="flex flex-col p-10">
           <div className="flex flex-col items-center">
-            {isLoading && <p>Loading...</p>}
             {data?.length == 0 ? (
               <p className="text-center">
                 You have no articles yet. Click on the button above to create
