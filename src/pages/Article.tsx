@@ -144,9 +144,9 @@ const ArticlePage = ({
 
             // if article is free, fetch content from ipfs
             if (parseInt(articleById.price) === 0) {
+                setShowLogin(false); setLocked(false);
                 const data: any = await fetch(getIpfsURL(articleById.data)).then(res => res.json())
                 setArticle((prev) => ({...prev, content: data}))
-                setShowLogin(false); setLocked(false);
             } else {
                 // if article is paid, check if user is logged in
                 if (!user?.addr) {
@@ -155,8 +155,8 @@ const ArticlePage = ({
                     setShowLogin(true); setLocked(true);
                 } else {
                     // if user is logged in, check if user has paid for article
-                    const paidArticle = await getPaidArticle(address, user?.addr, articleId)
                     setShowLogin(false);
+                    const paidArticle = await getPaidArticle(address, user?.addr, articleId)
                     if (paidArticle) {
                         setLocked(false);
                         let data = await fetch(getIpfsURL(paidArticle.data)).then(res => res.json())
