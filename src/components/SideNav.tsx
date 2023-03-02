@@ -48,16 +48,17 @@ function SideNav({ selectedTab }: { selectedTab: TabType }) {
                 })}
             </div>
         </div>
-        <div className="flex pl-4 cursor-pointer" onClick={() => navigate(`/${user?.addr}`)}>
+        <div className="flex pl-4 cursor-pointer" >
             {
               author?.img && 
               <img 
+              onClick={() => navigate(`/${user?.addr}`)}
                 src={author?.img}
                 className="rounded-full h-10"
                 alt="Flowbite Logo"
               />
             }
-            <div className="flex flex-col ml-2 w-52">
+            <div className="flex flex-col ml-2 w-52" onClick={() => navigate(`/${user?.addr}`)}>
                 {author?.name && <div className="text-sm font-semibold">{author?.name}</div>}
                 <div className="text-xs text-gray-500">
                     {author?.findName ? author?.findName : user?.addr}
