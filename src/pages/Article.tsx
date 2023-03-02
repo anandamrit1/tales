@@ -64,6 +64,32 @@ const ArticlePage = ({ post, isPreview = false, authorIdForPreview }: PostProps)
             purchaseArticle(authorId, article?.id, article?.price)
         }
     }
+    
+    // get articles by author address & article id
+    const getMyArticleById = async (address: string, postId: String) => {
+        let res;
+        try {
+            res = await fcl.query({
+                cadence: GetPartialPostById,
+                args: (arg: any, t: any) => [arg(address, t.Address), arg(postId, t.UInt64)]
+            })
+        } catch (e) { res = []; console.log(e) }
+        console.log("Res: ", res)
+        return res
+    }
+
+    // get if user has paid for article
+    const getPaidArticle = async (authorAddress: string, readerAddress: string, postId: String) => {
+        let res;
+        try {
+            res = await fcl.query({
+                cadence: GetArticle,
+                args: (arg: any, t: any) => [arg(authorAddress, t.Address), arg(readerAddress, t.Address), arg(postId, t.UInt64)]
+            })
+        } catch (e) { res = []; console.log(e) }
+        console.log("Res: ", res)
+        return res
+    }
 
     useEffect(() => {
         if (isPreview) {
@@ -73,111 +99,51 @@ const ArticlePage = ({ post, isPreview = false, authorIdForPreview }: PostProps)
 
 
     useEffect(() => {
-        const getMyArticleById = async (address: string, postId: String) => {
-            let res;
-            try {
-                res = await fcl.query({
-                    cadence: GetPartialPostById,
-                    args: (arg: any, t: any) => [arg(address, t.Address), arg(postId, t.UInt64)]
-                })
-            } catch (e) { res = []; console.log(e) }
-            console.log("Res: ", res)
-            return res
-        }
-
-        const getPaidArticle = async (authorAddress: string, readerAddress: string, postId: String) => {
-            let res;
-            try {
-                res = await fcl.query({
-                    cadence: GetArticle,
-                    args: (arg: any, t: any) => [arg(authorAddress, t.Address), arg(readerAddress, t.Address), arg(postId, t.UInt64)]
-                })
-            } catch (e) { res = []; console.log(e) }
-            console.log("Res: ", res)
-            return res
-        }
-
         const getArticlesByAuthor = async (address: string) => {
             const articleById = await getMyArticleById(address, articleId)
+            const articleTemp: ArticleType = {
+                authorAddress: articleById.author,
+                authorName: "",
+                authorDesc: "",
+                authorImg: "",
+                title: articleById.title,
+                content: undefined,
+                coverImg: articleById.image,
+                readTime: 10,
+                createdAt: new Date(parseInt(articleById.createDate) * 1000).toDateString(),
+                id: articleById.id,
+                likes: 0,
+                price: parseInt(articleById.price),
+            }
+            // setting article data excluding content
+            setArticle(articleTemp)
 
+            // if article is free, fetch content from ipfs
             if (parseInt(articleById.price) === 0) {
                 const data: any = await fetch(getIpfsURL(articleById.data)).then(res => res.json())
-                const article: ArticleType = {
-                    authorAddress: articleById.author,
-                    authorName: "",
-                    authorDesc: "",
-                    authorImg: "",
-                    title: articleById.title,
-                    content: data,
-                    coverImg: articleById.image,
-                    readTime: 0,
-                    createdAt: new Date(parseInt(articleById.createDate) * 1000).toDateString(),
-                    id: articleById.id,
-                    likes: 0,
-                    price: parseInt(articleById.price),
-                }
+                
                 setShowArticle(true)
-                setArticle(article)
+                setArticle((prev) => ({...prev, content: data}))
             } else {
+                // if article is paid, check if user is logged in
                 if (!user?.addr) {
                     setShowLogin(true)
-                    const article: ArticleType = {
-                        authorAddress: articleById.author,
-                        authorName: "",
-                        authorDesc: "",
-                        authorImg: "",
-                        title: articleById.title,
-                        content: { blocks: [] },
-                        coverImg: articleById.image,
-                        readTime: 0,
-                        createdAt: new Date(parseInt(articleById.createDate) * 1000).toDateString(),
-                        id: articleById.id,
-                        likes: 0,
-                        price: parseInt(articleById.price),
-                    }
 
-                    setArticle(article)
+                    setArticle((prev) => ({...prev, content: { blocks: [] }}))
                     setShowArticle(false)
                 } else {
+                    // if user is logged in, check if user has paid for article
                     const paidArticle = await getPaidArticle(address, user?.addr, articleId)
                     let data: any = { blocks: [] }
                     setShowLogin(false)
 
                     if (paidArticle) {
                         data = await fetch(getIpfsURL(paidArticle.data)).then(res => res.json())
-                        const article: ArticleType = {
-                            authorAddress: paidArticle.author,
-                            authorName: "",
-                            authorDesc: "",
-                            authorImg: "",
-                            title: paidArticle.title,
-                            content: data,
-                            coverImg: paidArticle.image,
-                            readTime: 0,
-                            createdAt: new Date(parseInt(paidArticle.createDate) * 1000).toDateString(),
-                            id: paidArticle.id,
-                            likes: 0,
-                            price: parseInt(paidArticle.price),
-                        }
-                        setArticle(article)
+                        
+                        setArticle((prev) => ({...prev, content: data}))
                         setShowArticle(true)
                     } else {
-                        const article: ArticleType = {
-                            authorAddress: articleById.author,
-                            authorName: "",
-                            authorDesc: "",
-                            authorImg: "",
-                            title: articleById.title,
-                            content: { blocks: [] },
-                            coverImg: articleById.image,
-                            readTime: 0,
-                            createdAt: new Date(parseInt(articleById.createDate) * 1000).toDateString(),
-                            id: articleById.id,
-                            likes: 0,
-                            price: parseInt(articleById.price),
-                        }
-
-                        setArticle(article)
+                        setArticle((prev) => ({...prev, content: { blocks: [] }}))
                     }
                 }
             }
@@ -196,7 +162,6 @@ const ArticlePage = ({ post, isPreview = false, authorIdForPreview }: PostProps)
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-
     if (isAuthorLoading || loading) return <Loader />
 
     if (article === undefined) return <div className='flex items-center justify-center text-lg'>Article not found</div>
@@ -210,7 +175,7 @@ const ArticlePage = ({ post, isPreview = false, authorIdForPreview }: PostProps)
                     handlePaidArticle={handlePaidArticle}
                     handleShow={handleShow}
                     user={user} />
-                <Article article={article} author={author} showContent={showArticle} />
+                <Article article={article} author={author} showContent={showArticle && article.content !== undefined} />
             </div>
             {
                 show &&

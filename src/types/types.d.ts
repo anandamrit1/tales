@@ -17,7 +17,7 @@ export type ArticleType = {
     authorDesc: string;
     authorImg: string;
     title: string;
-    content: OutputData;
+    content: OutputData | undefined;
     coverImg: string;
     readTime: number;
     createdAt: string;
