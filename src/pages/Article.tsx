@@ -22,6 +22,7 @@ import useCurrentUser from "hooks/useCurrentUser";
 import { subscribeTxStatus } from "utils/subscribeTxStatus";
 import Loader from "components/Loader";
 import { SkeletonLoader } from "components/Skeleton";
+import { getIpfsURL } from "utils/ipfs";
 
 type PostProps = {
     post?: ArticleType;
@@ -107,7 +108,7 @@ const Article = ({ post, isPreview = false, authorIdForPreview }: PostProps) => 
             const articleById = await getMyArticleById(address, articleId)
 
             if (parseInt(articleById.price) === 0) {
-                const data : any = await fetch(articleById.data).then(res => res.json())
+                const data : any = await fetch(getIpfsURL(articleById.data)).then(res => res.json())
                 const article: ArticleType = {
                     authorAddress: articleById.author,
                     authorName: "",
@@ -150,7 +151,7 @@ const Article = ({ post, isPreview = false, authorIdForPreview }: PostProps) => 
                     setShowLogin(false)
 
                     if (paidArticle) {
-                        data = await fetch(paidArticle.data.replace("ipfs.io", "nftstorage.link")).then(res => res.json())
+                        data = await fetch(getIpfsURL(paidArticle.data)).then(res => res.json())
                         const article: ArticleType = {
                             authorAddress: paidArticle.author,
                             authorName: "",
